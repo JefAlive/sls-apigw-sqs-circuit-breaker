@@ -1,4 +1,4 @@
-service: ${self:custom.defaults.service}
+service: ${self:custom.defaults.service}-create-item-consumer
 
 frameworkVersion: ${self:custom.defaults.version}
 
@@ -7,6 +7,7 @@ provider:
   runtime: ${self:custom.defaults.lambda.runtime}
   stage: ${self:custom.defaults.stage}
   region: ${self:custom.defaults.region}
+  deploymentMethod: ${self:custom.defaults.deploymentMethod}
   deploymentBucket:
     name: ${self:custom.defaults.service}-${self:provider.region}-${aws:accountId}
     serverSideEncryption: AES256
@@ -16,7 +17,7 @@ custom:
   defaults: ${file(../../defaults/cloudgto.yml):defaults}
 
 functions:
-  createItem:
+  createItemConsumer:
     handler: src/handlers/handler.handler
     timeout: 30
     runtime: nodejs18.x
@@ -27,6 +28,7 @@ functions:
           arn: ${param:CREATEITEMQUEUE-ARN}
     environment:
       ERROR_TOPIC_ARN: ${param:EXTERNALAPIERRORTOPIC-ARN}
+    iamRoleStatementsName: createItemConsumer-role
     iamRoleStatements:
       - Effect: 'Allow'
         Action:
@@ -54,9 +56,11 @@ resources:
         Enabled: true
         EventSourceArn: ${param:CREATEITEMQUEUE-ARN}
         FunctionName:
-          Ref: CreateItemConsumerLambdaFunction
+          Fn::GetAtt:
+            - CreateItemConsumerLambdaFunction
+            - Arn
         BatchSize: 10
-        FunctionResponseTypes: 
+        FunctionResponseTypes:
           - ReportBatchItemFailures
   Outputs:
     EventSourceMappingId:

@@ -6,6 +6,7 @@ provider:
   name: aws
   stage: ${self:custom.defaults.stage}
   region: ${self:custom.defaults.region}
+  deploymentMethod: ${self:custom.defaults.deploymentMethod}
   deploymentBucket:
     name: ${self:custom.defaults.service}-${self:provider.region}-${aws:accountId}
     serverSideEncryption: AES256

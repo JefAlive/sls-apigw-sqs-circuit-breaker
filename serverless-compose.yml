@@ -11,7 +11,7 @@ services:
     path: resources/sns/externalApiErrorTopic
   externalApiHealthyTopic:
     path: resources/sns/externalApiHealthyTopic
-  create-item:
+  createItem:
     params:
       API_GATEWAY_REST_API_ID: ${api.ApiId}
       API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
@@ -20,32 +20,23 @@ services:
       AUTHORIZER_ID: ${api.AuthorizerId}
       CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
       CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
-      EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
-      EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
-      EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
-      EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
     path: services/create-item
+    dependsOn:
+      - api
+      - mainUserpool
+      - createItemQueue
   createItemConsumer:
     params:
-      API_GATEWAY_REST_API_ID: ${api.ApiId}
-      API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
-      USER_POOL_ID: ${mainUserpool.UserPoolId}
-      USER_POOL_CLIENT_ID: ${mainUserpool.UserPoolClientId}
-      AUTHORIZER_ID: ${api.AuthorizerId}
       CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
       CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
       EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
       EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
-      EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
-      EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
     path: services/create-item-consumer
+    dependsOn:
+      - createItemQueue
+      - externalApiErrorTopic
   circuitBreaker:
     params:
-      API_GATEWAY_REST_API_ID: ${api.ApiId}
-      API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
-      USER_POOL_ID: ${mainUserpool.UserPoolId}
-      USER_POOL_CLIENT_ID: ${mainUserpool.UserPoolClientId}
-      AUTHORIZER_ID: ${api.AuthorizerId}
       CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
       CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
       EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
@@ -56,18 +47,16 @@ services:
       EVENTSOURCEMAPPING-ARN: ${createItemConsumer.EventSourceMappingArn}
       EVENTBRIDGE-NAME: 'EVENTBRIDGE-NAME'
     path: services/circuit-breaker
+    dependsOn:
+      - createItemQueue
+      - externalApiErrorTopic
+      - externalApiHealthyTopic
+      - createItemConsumer
   healthChecker:
     params:
-      API_GATEWAY_REST_API_ID: ${api.ApiId}
-      API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
-      USER_POOL_ID: ${mainUserpool.UserPoolId}
-      USER_POOL_CLIENT_ID: ${mainUserpool.UserPoolClientId}
-      AUTHORIZER_ID: ${api.AuthorizerId}
-      CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
-      CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
-      EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
-      EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
       EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
       EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
       EVENTBRIDGE-NAME: 'EVENTBRIDGE-NAME'
     path: services/health-checker
+    dependsOn:
+      - externalApiHealthyTopic

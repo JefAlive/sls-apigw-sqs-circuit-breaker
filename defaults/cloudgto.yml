@@ -7,3 +7,4 @@ defaults:
     memorySize: 1024
     runtime: nodejs18.x
   version: "3"
+  deploymentMethod: direct
