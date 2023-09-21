@@ -53,15 +53,11 @@ resources:
     EventSourceMapping:
       Type: AWS::Lambda::EventSourceMapping
       Properties:
-        Enabled: true
         EventSourceArn: ${param:CREATEITEMQUEUE-ARN}
         FunctionName:
           Fn::GetAtt:
             - CreateItemConsumerLambdaFunction
             - Arn
-        BatchSize: 10
-        FunctionResponseTypes:
-          - ReportBatchItemFailures
   Outputs:
     EventSourceMappingId:
       Value:

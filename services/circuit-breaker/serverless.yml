@@ -22,7 +22,6 @@ functions:
     timeout: 30
     runtime: nodejs18.x
     memorySize: 1024
-    reservedConcurrency: 1
     vpc: {}
     events:
       - sns:
@@ -38,22 +37,12 @@ functions:
           - "lambda:GetEventSourceMapping"
           - "lambda:UpdateEventSourceMapping"
         Resource:
-          - ${param:EVENTSOURCEMAPPING-ARN}
-      - Effect: 'Allow'
-        Action:
-          - 'sns:*'
-        Resource:
-          - ${param:EXTERNALAPIERRORTOPIC-ARN}
-      - Effect: 'Allow'
-        Action:
-          - 'sns:*'
-        Resource:
-          - ${param:EXTERNALAPIHEALTHYTOPIC-ARN}
+          - "*"
       - Effect: 'Allow'
         Action:
           - 'events:*'
         Resource:
-          - !Ref ${param:EVENTBRIDGE-NAME}
+          - "*"
       
 
 plugins:

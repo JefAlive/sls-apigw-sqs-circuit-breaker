@@ -54,4 +54,6 @@ resources:
           - TopicName
     SNSArn:
       Value:
-        Ref: SNS
+        Fn::GetAtt:
+          - SNS
+          - Arn

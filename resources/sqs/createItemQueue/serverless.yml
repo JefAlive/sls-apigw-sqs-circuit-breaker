@@ -54,6 +54,9 @@ resources:
                   - SQS
                   - Arn
   Outputs:
+    SQSId:
+      Value:
+        Ref: SQS
     SQS:
       Value:
         Fn::GetAtt:
