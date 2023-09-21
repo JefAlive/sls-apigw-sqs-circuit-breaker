@@ -22,7 +22,7 @@ custom:
 
 functions:
   createItem:
-    handler: src/handlers/createItem.handler
+    handler: src/handlers/handler.handler
     timeout: 30
     runtime: nodejs18.x
     memorySize: 1024
