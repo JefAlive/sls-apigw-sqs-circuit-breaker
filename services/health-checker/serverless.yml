@@ -21,9 +21,21 @@ functions:
     timeout: 30
     runtime: nodejs18.x
     memorySize: 1024
+    reservedConcurrency: 1
     vpc: {}
     events:
-      - eventBridge ... // TODO
+      - eventBridge:
+          name: ${param:EVENTBRIDGE-NAME}
+          enabled: false
+          schedule: rate(30 seconds)
+    environment:
+      HEALTH_TOPIC_ARN: ${param:EXTERNALAPIHEALTHYTOPIC-ARN}
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - 'sns:publish'
+        Resource:
+          - ${param:EXTERNALAPIHEALTHYTOPIC-ARN}
 
 plugins:
   - serverless-deployment-bucket

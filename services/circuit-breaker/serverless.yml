@@ -21,10 +21,38 @@ functions:
     timeout: 30
     runtime: nodejs18.x
     memorySize: 1024
+    reservedConcurrency: 1
     vpc: {}
     events:
-      - sns ... // TODO
-      - sns ... // TODO
+      - sns:
+          arn: {param:EXTERNALAPIERRORTOPIC-ARN}
+          topicName: ${param:EXTERNALAPIERRORTOPIC-TOPIC_NAME}
+      - sns:
+          arn: {param:EXTERNALAPIHEALTHYTOPIC-ARN}
+          topicName: ${param:EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:GetEventSourceMapping"
+          - "lambda:UpdateEventSourceMapping"
+        Resource:
+          - ${param:EVENTSOURCEMAPPING-ARN}
+      - Effect: 'Allow'
+        Action:
+          - 'sns:*'
+        Resource:
+          - ${param:EXTERNALAPIERRORTOPIC-ARN}
+      - Effect: 'Allow'
+        Action:
+          - 'sns:*'
+        Resource:
+          - ${param:EXTERNALAPIHEALTHYTOPIC-ARN}
+      - Effect: 'Allow'
+        Action:
+          - 'events:*'
+        Resource:
+          - !Ref ${param:EVENTBRIDGE-NAME}
+      
 
 plugins:
   - serverless-deployment-bucket

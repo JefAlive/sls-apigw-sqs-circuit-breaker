@@ -23,7 +23,21 @@ functions:
     memorySize: 1024
     vpc: {}
     events:
-      - sqs ... // TODO
+      - sqs:
+          arn: ${param:CREATEITEMQUEUE-ARN}
+    environment:
+      ERROR_TOPIC_ARN: ${param:EXTERNALAPIERRORTOPIC-ARN}
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - 'sqs:*'
+        Resource:
+          - ${param:CREATEITEMQUEUE-ARN}
+      - Effect: 'Allow'
+        Action:
+          - 'sns:publish'
+        Resource:
+          - ${param:EXTERNALAPIERRORTOPIC-ARN}
 
 plugins:
   - serverless-deployment-bucket
@@ -31,3 +45,27 @@ plugins:
 
 package:
   individually: true
+
+resources:
+  Resources:
+    EventSourceMapping:
+      Type: AWS::Lambda::EventSourceMapping
+      Properties:
+        Enabled: true
+        EventSourceArn: ${param:CREATEITEMQUEUE-ARN}
+        FunctionName:
+          Ref: CreateItemConsumerLambdaFunction
+        BatchSize: 10
+        FunctionResponseTypes: 
+          - ReportBatchItemFailures
+  Outputs:
+    EventSourceMappingId:
+      Value:
+        Fn::GetAtt:
+          - EventSourceMapping
+          - Id
+    EventSourceMappingArn:
+      Value:
+        Fn::GetAtt:
+          - EventSourceMapping
+          - Arn

@@ -7,8 +7,6 @@ services:
     path: resources/cognito
   createItemQueue:
     path: resources/sqs/createItemQueue
-  every30SecEvent:
-    path: resources/event-bridge/every30sec
   externalApiErrorTopic:
     path: resources/sns/externalApiErrorTopic
   externalApiHealthyTopic:
@@ -27,7 +25,7 @@ services:
       EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
       EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
     path: services/create-item
-  create-item-consumer:
+  createItemConsumer:
     params:
       API_GATEWAY_REST_API_ID: ${api.ApiId}
       API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
@@ -41,7 +39,7 @@ services:
       EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
       EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
     path: services/create-item-consumer
-  circuit-breaker:
+  circuitBreaker:
     params:
       API_GATEWAY_REST_API_ID: ${api.ApiId}
       API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
@@ -54,8 +52,11 @@ services:
       EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
       EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
       EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
+      EVENTSOURCEMAPPING-ID: ${createItemConsumer.EventSourceMappingId}
+      EVENTSOURCEMAPPING-ARN: ${createItemConsumer.EventSourceMappingArn}
+      EVENTBRIDGE-NAME: 'EVENTBRIDGE-NAME'
     path: services/circuit-breaker
-  health-checker:
+  healthChecker:
     params:
       API_GATEWAY_REST_API_ID: ${api.ApiId}
       API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
@@ -68,4 +69,5 @@ services:
       EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
       EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
       EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
+      EVENTBRIDGE-NAME: 'EVENTBRIDGE-NAME'
     path: services/health-checker
