@@ -1,0 +1,71 @@
+services:
+  api:
+    path: resources/api
+    params:
+      COGNITO_ARN: ${mainUserpool.UserPoolArn}
+  mainUserpool:
+    path: resources/cognito
+  createItemQueue:
+    path: resources/sqs/createItemQueue
+  every30SecEvent:
+    path: resources/event-bridge/every30sec
+  externalApiErrorTopic:
+    path: resources/sns/externalApiErrorTopic
+  externalApiHealthyTopic:
+    path: resources/sns/externalApiHealthyTopic
+  create-item:
+    params:
+      API_GATEWAY_REST_API_ID: ${api.ApiId}
+      API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
+      USER_POOL_ID: ${mainUserpool.UserPoolId}
+      USER_POOL_CLIENT_ID: ${mainUserpool.UserPoolClientId}
+      AUTHORIZER_ID: ${api.AuthorizerId}
+      CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
+      CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
+      EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
+      EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
+      EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
+      EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
+    path: services/create-item
+  create-item-consumer:
+    params:
+      API_GATEWAY_REST_API_ID: ${api.ApiId}
+      API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
+      USER_POOL_ID: ${mainUserpool.UserPoolId}
+      USER_POOL_CLIENT_ID: ${mainUserpool.UserPoolClientId}
+      AUTHORIZER_ID: ${api.AuthorizerId}
+      CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
+      CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
+      EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
+      EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
+      EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
+      EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
+    path: services/create-item-consumer
+  circuit-breaker:
+    params:
+      API_GATEWAY_REST_API_ID: ${api.ApiId}
+      API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
+      USER_POOL_ID: ${mainUserpool.UserPoolId}
+      USER_POOL_CLIENT_ID: ${mainUserpool.UserPoolClientId}
+      AUTHORIZER_ID: ${api.AuthorizerId}
+      CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
+      CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
+      EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
+      EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
+      EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
+      EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
+    path: services/circuit-breaker
+  health-checker:
+    params:
+      API_GATEWAY_REST_API_ID: ${api.ApiId}
+      API_GATEWAY_REST_API_ROOT_RESOURCE_ID: ${api.ApiResourceId}
+      USER_POOL_ID: ${mainUserpool.UserPoolId}
+      USER_POOL_CLIENT_ID: ${mainUserpool.UserPoolClientId}
+      AUTHORIZER_ID: ${api.AuthorizerId}
+      CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
+      CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
+      EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
+      EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
+      EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
+      EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
+    path: services/health-checker

@@ -1,0 +1,9 @@
+defaults:
+  service: circuit-breaker
+  stage: dev
+  region: us-east-1
+  lambda:
+    timeout: 30
+    memorySize: 1024
+    runtime: nodejs18.x
+  version: "3"

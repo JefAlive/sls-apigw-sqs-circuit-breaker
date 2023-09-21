@@ -1,0 +1,34 @@
+service: ${self:custom.defaults.service}
+
+frameworkVersion: ${self:custom.defaults.version}
+
+provider:
+  name: aws
+  runtime: ${self:custom.defaults.lambda.runtime}
+  stage: ${self:custom.defaults.stage}
+  region: ${self:custom.defaults.region}
+  deploymentBucket:
+    name: ${self:custom.defaults.service}-${self:provider.region}-${aws:accountId}
+    serverSideEncryption: AES256
+    
+custom:
+  base: ${self:service}-${self:provider.stage}
+  defaults: ${file(../../defaults/cloudgto.yml):defaults}
+
+functions:
+  listenHealthTopics:
+    handler: src/handlers/handler.handler
+    timeout: 30
+    runtime: nodejs18.x
+    memorySize: 1024
+    vpc: {}
+    events:
+      - sns ... // TODO
+      - sns ... // TODO
+
+plugins:
+  - serverless-deployment-bucket
+  - serverless-iam-roles-per-function
+
+package:
+  individually: true

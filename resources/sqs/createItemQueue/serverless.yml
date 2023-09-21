@@ -1,0 +1,70 @@
+service: ${self:custom.defaults.service}-sqs-main-queue
+
+frameworkVersion: ${self:custom.defaults.version}
+
+provider:
+  name: aws
+  stage: ${self:custom.defaults.stage}
+  region: ${self:custom.defaults.region}
+  deploymentBucket:
+    name: ${self:custom.defaults.service}-${self:provider.region}-${aws:accountId}
+    serverSideEncryption: AES256
+
+custom:
+  base: ${self:service}-${self:provider.stage}
+  defaults: ${file(../../../defaults/cloudgto.yml):defaults}
+
+plugins:
+  - serverless-deployment-bucket
+
+resources:
+  Resources:
+    SQS:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.base}-createItemQueue
+        VisibilityTimeout: 300
+        MessageRetentionPeriod: 1209600
+        ReceiveMessageWaitTimeSeconds: 20
+        DelaySeconds: 0
+        MaximumMessageSize: 262144
+    SQSPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - Ref: SQS
+        PolicyDocument:
+          Version: '2012-10-17'
+          Id:
+            Fn::Sub: ${self:custom.base}-sqs-policy
+          Statement:
+            - Sid:
+                Fn::Sub: ${self:custom.base}-sqs-policy-statement
+              Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action:
+                - sqs:SendMessage
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:GetQueueAttributes
+              Resource:
+                Fn::GetAtt:
+                  - SQS
+                  - Arn
+  Outputs:
+    SQS:
+      Value:
+        Fn::GetAtt:
+          - SQS
+          - QueueName
+    SQSUrl:
+      Value:
+        Fn::GetAtt:
+          - SQS
+          - QueueUrl
+    SQSArn:
+      Value:
+        Fn::GetAtt:
+          - SQS
+          - Arn

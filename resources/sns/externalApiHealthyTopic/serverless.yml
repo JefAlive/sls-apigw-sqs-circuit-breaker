@@ -1,0 +1,56 @@
+service: ${self:custom.defaults.service}-sns-externalApiHealthyTopic
+
+frameworkVersion: ${self:custom.defaults.version}
+
+provider:
+  name: aws
+  stage: ${self:custom.defaults.stage}
+  region: ${self:custom.defaults.region}
+  deploymentBucket:
+    name: ${self:custom.defaults.service}-${self:provider.region}-${aws:accountId}
+    serverSideEncryption: AES256
+
+custom:
+  base: ${self:service}-${self:provider.stage}
+  defaults: ${file(../../../defaults/cloudgto.yml):defaults}
+
+plugins:
+  - serverless-deployment-bucket
+
+resources:
+  Resources:
+    SNS:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:custom.base}-externalApiHealthyTopic
+    SNSPolicy:
+      Type: AWS::SNS::TopicPolicy
+      Properties:
+        Topics:
+          - Ref: SNS
+        PolicyDocument:
+          Version: '2012-10-17'
+          Id:
+            Fn::Sub: ${self:custom.base}-sns-policy
+          Statement:
+            - Sid:
+                Fn::Sub: ${self:custom.base}-sns-policy-statement
+              Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action:
+                - sns:Publish
+                - sns:Subscribe
+                - sns:GetTopicAttributes
+                - sns:Receive
+                - sns:DeleteTopic
+              Resource: '*'
+  Outputs:
+    SNSTopicName:
+      Value:
+        Fn::GetAtt:
+          - SNS
+          - TopicName
+    SNSArn:
+      Value:
+        Ref: SNS
