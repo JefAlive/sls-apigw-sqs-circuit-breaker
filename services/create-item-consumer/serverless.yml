@@ -25,7 +25,7 @@ functions:
     vpc: {}
     events:
       - sqs:
-          arn: ${param:CREATEITEMQUEUE-ARN}
+          arn: arn:aws:sqs:${self:provider.region}:${aws:accountId}:${param:CREATEITEMQUEUE-NAME}
     environment:
       ERROR_TOPIC_ARN: ${param:EXTERNALAPIERRORTOPIC-ARN}
     iamRoleStatementsName: createItemConsumer-role
@@ -34,7 +34,7 @@ functions:
         Action:
           - 'sqs:*'
         Resource:
-          - ${param:CREATEITEMQUEUE-ARN}
+          - arn:aws:sqs:${self:provider.region}:${aws:accountId}:${param:CREATEITEMQUEUE-NAME}
       - Effect: 'Allow'
         Action:
           - 'sns:publish'
@@ -53,7 +53,7 @@ resources:
     EventSourceMapping:
       Type: AWS::Lambda::EventSourceMapping
       Properties:
-        EventSourceArn: ${param:CREATEITEMQUEUE-ARN}
+        EventSourceArn: arn:aws:sqs:${self:provider.region}:${aws:accountId}:${param:CREATEITEMQUEUE-NAME}
         FunctionName:
           Fn::GetAtt:
             - CreateItemConsumerLambdaFunction
@@ -64,8 +64,3 @@ resources:
         Fn::GetAtt:
           - EventSourceMapping
           - Id
-    EventSourceMappingArn:
-      Value:
-        Fn::GetAtt:
-          - EventSourceMapping
-          - Arn

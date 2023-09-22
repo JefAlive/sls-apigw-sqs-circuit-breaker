@@ -34,7 +34,7 @@ functions:
     iamRoleStatements:
       - Effect: 'Allow'
         Action:
-          - 'sns:publish'
+          - 'sns:Publish'
         Resource:
           - ${param:EXTERNALAPIHEALTHYTOPIC-ARN}
 

@@ -25,10 +25,10 @@ functions:
     vpc: {}
     events:
       - sns:
-          arn: {param:EXTERNALAPIERRORTOPIC-ARN}
+          arn: ${param:EXTERNALAPIERRORTOPIC-ARN}
           topicName: ${param:EXTERNALAPIERRORTOPIC-TOPIC_NAME}
       - sns:
-          arn: {param:EXTERNALAPIHEALTHYTOPIC-ARN}
+          arn: ${param:EXTERNALAPIHEALTHYTOPIC-ARN}
           topicName: ${param:EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME}
     iamRoleStatementsName: circuitBreaker-role
     iamRoleStatements:
@@ -43,7 +43,6 @@ functions:
           - 'events:*'
         Resource:
           - "*"
-      
 
 plugins:
   - serverless-deployment-bucket

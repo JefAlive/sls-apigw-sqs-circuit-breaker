@@ -56,4 +56,4 @@ resources:
       Value:
         Fn::GetAtt:
           - SNS
-          - Arn
+          - TopicArn
