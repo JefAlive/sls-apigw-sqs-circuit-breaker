@@ -23,6 +23,10 @@ functions:
     runtime: nodejs18.x
     memorySize: 1024
     vpc: {}
+    environment:
+      awsRegion: ${self:custom.defaults.region}
+      eventBridgeName: ${self:EVENTBRIDGE-NAME}
+      lambdaMappingId: ${self:LAMBDAMAPPING-ID}
     events:
       - sns:
           arn: ${param:EXTERNALAPIERRORTOPIC-ARN}

@@ -1,12 +1,31 @@
+'use strict'
+
+import { PublishCommand, SNSClient } from '@aws-sdk/client-sns'
+
 const handler = async () => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'OK'
-    })
+  // something from sqs here
+
+  const response = await fetch('https://www.boredapi.com/api/activity')
+  const data = response.json()
+
+  if (!data.price) {
+    await publishUnhealthy()
   }
+
+  return 'SUCCESS'
 }
 
-module.exports = {
-  handler
+const publishUnhealthy = async () => {
+  const snsClient = new SNSClient({})
+  return await snsClient.send(
+    new PublishCommand({
+      Message: {
+        createItemConsumer: 'disable',
+        healthChecker: 'enable',
+      },
+      TopicArn: process.env['EXTERNALAPIERRORTOPIC-ARN'],
+    }),
+  )
 }
+
+module.exports = { handler }
