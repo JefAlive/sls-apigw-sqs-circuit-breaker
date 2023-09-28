@@ -3,8 +3,6 @@
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns'
 
 const handler = async () => {
-  // something from sqs here
-
   const response = await fetch('https://www.boredapi.com/api/activity')
   const data = response.json()
 
@@ -23,7 +21,7 @@ const publishUnhealthy = async () => {
         createItemConsumer: 'disable',
         healthChecker: 'enable',
       },
-      TopicArn: process.env['EXTERNALAPIERRORTOPIC-ARN'],
+      TopicArn: process.env.errorTopicArn,
     }),
   )
 }

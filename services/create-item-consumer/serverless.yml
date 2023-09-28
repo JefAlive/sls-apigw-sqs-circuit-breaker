@@ -27,7 +27,7 @@ functions:
       - sqs:
           arn: arn:aws:sqs:${self:provider.region}:${aws:accountId}:${param:CREATEITEMQUEUE-NAME}
     environment:
-      ERROR_TOPIC_ARN: ${param:EXTERNALAPIERRORTOPIC-ARN}
+      errorTopicArn: ${param:EXTERNALAPIERRORTOPIC-ARN}
     iamRoleStatementsName: createItemConsumer-role
     iamRoleStatements:
       - Effect: 'Allow'

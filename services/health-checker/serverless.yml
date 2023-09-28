@@ -29,7 +29,7 @@ functions:
           enabled: false
           schedule: rate(1 minute)
     environment:
-      HEALTH_TOPIC_ARN: ${param:EXTERNALAPIHEALTHYTOPIC-ARN}
+      healthyTopicArn: ${param:EXTERNALAPIHEALTHYTOPIC-ARN}
     iamRoleStatementsName: healthChecker-role
     iamRoleStatements:
       - Effect: 'Allow'

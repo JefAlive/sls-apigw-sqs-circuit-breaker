@@ -21,7 +21,7 @@ const publishHealthy = async () => {
         createItemConsumer: 'enable',
         healthChecker: 'disable',
       },
-      TopicArn: process.env['EXTERNALAPIHEALTHYTOPIC-ARN'],
+      TopicArn: process.env.healthyTopicArn,
     }),
   )
 }

@@ -15,7 +15,7 @@
     "@aws-sdk/client-eventbridge": "^3.421.0",
     "@aws-sdk/client-lambda": "^3.421.0",
     "@aws-sdk/client-sns": "^3.421.0",
-    "@aws-sdk/client-sqs": "^3.354.0",
+    "@aws-sdk/client-sqs": "^3.421.0",
     "@aws-sdk/lib-dynamodb": "^3.341.0",
     "@aws-sdk/util-endpoints": "*",
     "@rocketseat/eslint-config": "^2.1.0",

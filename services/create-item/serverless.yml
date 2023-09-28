@@ -37,6 +37,8 @@ functions:
           authorizer:
             type: COGNITO_USER_POOLS
             authorizerId: ${param:AUTHORIZER_ID}
+    environment:
+      queueUrl: ${param:CREATEITEMQUEUE-URL}
     iamRoleStatementsName: createItem-role
     iamRoleStatements:
       - Effect: Allow
