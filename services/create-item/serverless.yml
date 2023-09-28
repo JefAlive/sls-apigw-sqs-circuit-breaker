@@ -33,10 +33,10 @@ functions:
           path: /items
           method: POST
           cors: true
-          private: true
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId: ${param:AUTHORIZER_ID}
+          #private: true
+          #authorizer:
+          #  type: COGNITO_USER_POOLS
+          #  authorizerId: ${param:AUTHORIZER_ID}
     environment:
       queueUrl: ${param:CREATEITEMQUEUE-URL}
     iamRoleStatementsName: createItem-role
@@ -50,6 +50,11 @@ functions:
           - xray:GetSamplingTargets
           - xray:GetSamplingStatisticSummaries
         Resource: "*"
+      - Effect: Allow
+        Action:
+          - sqs:SendMessage
+        Resource:
+          - arn:aws:sqs:${self:provider.region}:${aws:accountId}:${param:CREATEITEMQUEUE-NAME}
 
 plugins:
   - serverless-offline

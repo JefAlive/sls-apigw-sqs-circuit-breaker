@@ -19,7 +19,7 @@ services:
       USER_POOL_CLIENT_ID: ${mainUserpool.UserPoolClientId}
       AUTHORIZER_ID: ${api.AuthorizerId}
       CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
-      CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
+      CREATEITEMQUEUE-NAME: ${createItemQueue.SQS}
     path: services/create-item
     dependsOn:
       - api
@@ -27,8 +27,6 @@ services:
       - createItemQueue
   createItemConsumer:
     params:
-      CREATEITEMQUEUE-URL: ${createItemQueue.SQSUrl}
-      CREATEITEMQUEUE-ARN: ${createItemQueue.SQSArn}
       CREATEITEMQUEUE-NAME: ${createItemQueue.SQS}
       EXTERNALAPIERRORTOPIC-TOPIC_NAME: ${externalApiErrorTopic.SNSTopicName}
       EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}

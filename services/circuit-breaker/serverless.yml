@@ -19,14 +19,14 @@ custom:
 functions:
   circuitBreaker:
     handler: src/handlers/handler.handler
-    timeout: 30
+    timeout: 60
     runtime: nodejs18.x
     memorySize: 1024
     vpc: {}
     environment:
       awsRegion: ${self:custom.defaults.region}
-      eventBridgeName: ${self:EVENTBRIDGE-NAME}
-      lambdaMappingId: ${self:LAMBDAMAPPING-ID}
+      eventBridgeName: ${param:EVENTBRIDGE-NAME}
+      lambdaMappingId: ${param:LAMBDAMAPPING-ID}
     events:
       - sns:
           arn: ${param:EXTERNALAPIERRORTOPIC-ARN}
@@ -41,10 +41,11 @@ functions:
           - "lambda:GetEventSourceMapping"
           - "lambda:UpdateEventSourceMapping"
         Resource:
-          - "*"
+          - arn:aws:lambda:${self:provider.region}:${aws:accountId}:event-source-mapping:${param:LAMBDAMAPPING-ID}
       - Effect: 'Allow'
         Action:
-          - 'events:*'
+          - 'events:EnableRule'
+          - 'events:DisableRule'
         Resource:
           - "*"
 

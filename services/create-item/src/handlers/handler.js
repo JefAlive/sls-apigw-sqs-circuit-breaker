@@ -1,4 +1,6 @@
-import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs'
+'use strict'
+
+const { SQSClient, SendMessageCommand } = require('@aws-sdk/client-sqs')
 
 const handler = async (event) => {
   await pushToProcessingQueue(event.body)
@@ -19,6 +21,7 @@ const pushToProcessingQueue = async (message) => {
       MessageBody: message,
     }),
   )
+  console.log('item pushed to processing queue')
 }
 
 module.exports = { handler }
