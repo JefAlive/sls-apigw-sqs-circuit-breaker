@@ -42,6 +42,8 @@ services:
       EXTERNALAPIERRORTOPIC-ARN: ${externalApiErrorTopic.SNSArn}
       EXTERNALAPIHEALTHYTOPIC-TOPIC_NAME: ${externalApiHealthyTopic.SNSTopicName}
       EXTERNALAPIHEALTHYTOPIC-ARN: ${externalApiHealthyTopic.SNSArn}
+      EVENTBRIDGE-NAME: 'EVENTBRIDGE-NAME'
+      LAMBDAMAPPING-ID: ${createItemConsumer.EventSourceMappingId}
     path: services/circuit-breaker
     dependsOn:
       - createItemQueue
