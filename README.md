@@ -7,11 +7,11 @@ AWS + Serverless Framework Circuit Breaker pattern for a Processing Queue use ca
 
 There are many Circuit Breakers patterns, right? The most popular pattern is like this:
 
-![API Gateway - Lambda - Circuit Breaker - External API image here]()
+![API Gateway - Lambda - Circuit Breaker - External API](https://i.imgur.com/R6o3PZM.png)
 
 I consider the image above an anti-pattern, however this pattern was developed in order to put the API Gateway requests in a processing queue, so it will have a processing queue Lambda that depends on an external API (that may fail at certain times of the day), but with this circuit breaker it can track these fail attempts and avoid processing the queue while external API doesn't reestabilish. Once the circuit is aborted by fail attempts, this project provides a health checker on external API in order to reactivate the processing queue when the API responds successfuly a /status endpoint.
 
-![This pattern image here]()
+![This pattern](https://i.imgur.com/jNXnDaY.png)
 
 The advantage here is avoiding processing when external API is not responding properly, lowering costs and fail attempts.
 
